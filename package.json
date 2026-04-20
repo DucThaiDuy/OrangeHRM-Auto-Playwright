@@ -1,0 +1,30 @@
+{
+  "name": "orangehrm-automation-playwright",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:chromium": "npx playwright test --project=chromium",
+    "test:admin": "npx playwright test --grep @admin",
+    "test:buzz": "npx playwright test --grep @buzz",
+    "test:dashboard": "npx playwright test --grep @dashboard",
+    "test:auth": "npx playwright test --grep @auth",
+    "test:claim": "npx playwright test --grep @claim",
+    "test:recruitment": "npx playwright test --grep @recruitment",
+    "report": "npx playwright show-report",
+    "allure:generate": "npx allure generate allure-results --clean -o allure-report",
+    "allure:open": "npx allure open allure-report",
+    "allure:clean": "rimraf allure-results allure-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.6.0",
+    "allure-commandline": "^2.38.1",
+    "allure-playwright": "^3.7.1",
+    "rimraf": "^6.1.3"
+  }
+}
