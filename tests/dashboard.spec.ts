@@ -11,7 +11,7 @@ test.describe("Dashboard Page Verification @dashboard", () => {
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
     dashboardPage = new DashboardPage(page);
-    
+
     // Login to reach the dashboard
     await loginPage.goto();
     await loginPage.login(
@@ -24,14 +24,14 @@ test.describe("Dashboard Page Verification @dashboard", () => {
   test.describe("UI Verifications - Sidebar & Header", () => {
     test("[TC-0203] Verify all main menu items are visible", async () => {
       const expectedMenuItems = [
-        "Admin", "PIM", "Leave", "Time", "Recruitment", 
-        "My Info", "Performance", "Dashboard", "Directory", 
+        "Admin", "PIM", "Leave", "Time", "Recruitment",
+        "My Info", "Performance", "Dashboard", "Directory",
         "Maintenance", "Claim", "Buzz"
       ];
-      
+
       const count = await dashboardPage.getSidebarItemCount();
       expect(count).toBeGreaterThanOrEqual(expectedMenuItems.length);
-      
+
       for (const item of expectedMenuItems) {
         await expect(dashboardPage.page.locator(`.oxd-main-menu-item:has-text("${item}")`)).toBeVisible();
       }
@@ -72,13 +72,23 @@ test.describe("Dashboard Page Verification @dashboard", () => {
       const count = await dashboardPage.quickLaunchItems.count();
       expect(count).toBe(6);
     });
+
+    test("[TC-0214] Verify sidebar collapses", async () => {
+      const before = await dashboardPage.bodySidebar.evaluate(el => el.clientWidth);
+
+      await dashboardPage.iconChevronLeft.click();
+
+      const after = await dashboardPage.bodySidebar.evaluate(el => el.clientWidth);
+
+      expect(after).toBeLessThan(before);
+    });
   });
 
   test.describe("Functional Tests", () => {
     test("[TC-0220] Verify User Dropdown is clickable", async () => {
-        await dashboardPage.userDropdownName.click();
-        const logoutLink = dashboardPage.page.getByRole('menuitem', { name: 'Logout' });
-        await expect(logoutLink).toBeVisible();
+      await dashboardPage.userDropdownName.click();
+      const logoutLink = dashboardPage.page.getByRole('menuitem', { name: 'Logout' });
+      await expect(logoutLink).toBeVisible();
     });
   });
 });

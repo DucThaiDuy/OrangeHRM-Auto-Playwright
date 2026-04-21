@@ -8,6 +8,8 @@ export class DashboardPage extends BasePage {
     readonly dashboardWidgets: Locator;
     readonly quickLaunchItems: Locator;
     readonly upgradeButton: Locator;
+    readonly iconChevronLeft: Locator;
+    readonly bodySidebar: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -17,6 +19,8 @@ export class DashboardPage extends BasePage {
         this.dashboardWidgets = page.locator('.orangehrm-dashboard-widget-card');
         this.quickLaunchItems = page.locator('.orangehrm-quicklaunch-item');
         this.upgradeButton = page.locator('.orangehrm-upgrade-button');
+        this.iconChevronLeft = page.locator('i.oxd-icon.bi-chevron-left');
+        this.bodySidebar = page.locator('div.oxd-sidepanel-body')
     }
 
     async getHeaderTitle() {
