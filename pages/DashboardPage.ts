@@ -16,8 +16,8 @@ export class DashboardPage extends BasePage {
         this.headerTitle = page.locator('.oxd-topbar-header-title');
         this.userDropdownName = page.locator('.oxd-userdropdown-name');
         this.sidebarItems = page.locator('.oxd-main-menu-item');
-        this.dashboardWidgets = page.locator('.orangehrm-dashboard-widget-card');
-        this.quickLaunchItems = page.locator('.orangehrm-quicklaunch-item');
+        this.dashboardWidgets = page.locator('.oxd-grid-item.orangehrm-dashboard-widget');
+        this.quickLaunchItems = page.locator('.orangehrm-quick-launch-card');
         this.upgradeButton = page.locator('.orangehrm-upgrade-button');
         this.iconChevronLeft = page.locator('i.oxd-icon.bi-chevron-left');
         this.bodySidebar = page.locator('div.oxd-sidepanel-body')
