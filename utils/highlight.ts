@@ -18,7 +18,7 @@ export async function highlight(
   locator: Locator,
   label = '',
   color = '#00C853',
-  durationMs = 800
+  durationMs = 1500
 ): Promise<void> {
   try {
     // Scroll into view first
@@ -79,6 +79,9 @@ export async function highlight(
       },
       { color, label, durationMs }
     );
+
+    // Brief pause after highlight fades so the eye can register before moving on
+    await page.waitForTimeout(300);
   } catch {
     // Silently ignore if element is gone or detached – do not fail the test
   }

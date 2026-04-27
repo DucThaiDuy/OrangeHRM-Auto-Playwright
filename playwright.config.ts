@@ -42,9 +42,9 @@ export default defineConfig({
     
     /* Open Browser visibly */
     headless: false,
-    viewport: null, // Let browser maximize to screen size
+    viewport: { width: 1280, height: 720 },
     launchOptions: {
-        args: ["--start-maximized"]
+        args: []
     }
   },
 
@@ -53,16 +53,6 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-    },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
     },
   ],
 
