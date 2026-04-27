@@ -304,9 +304,11 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       page,
     }) => {
       const postMessage = `Automated Post ${Date.now()}`;
-      const photoPath = path.resolve(
-        __dirname,
-        "../../test-data/assets/sample-photo.jpg",
+      const photoPath = path.join(
+        process.cwd(),
+        "test-data",
+        "assets",
+        "ba-na-hill.jpeg",
       );
 
       await buzzPage.openSharePhotosModal();
@@ -377,47 +379,36 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       page,
     }) => {
       const deleteTargetMessage = `Post to delete ${Date.now()}`;
+
+      // 1. Create post
       await highlight(page, buzzPage.postInput, "Post Input");
       await buzzPage.postInput.fill(deleteTargetMessage);
       await buzzPage.postButton.click();
-      await expect(buzzPage.page.locator(".oxd-toast-content"))
-        .toBeVisible({ timeout: 10000 })
-        .catch(() => {});
-      await buzzPage.page.waitForTimeout(1000);
 
-      await highlight(
-        page,
-        buzzPage.firstPostMoreOptions,
-        "More Options (...)",
-        "#00C853",
-      );
-      await buzzPage.firstPostMoreOptions.click();
-      await highlight(
-        page,
-        buzzPage.deletePostOption,
-        "Delete Post Option",
-        "#00C853",
-      );
-      await buzzPage.deletePostOption.click();
-      await highlight(
-        page,
-        buzzPage.confirmDeleteButton,
-        "Confirm Delete",
-        "#00C853",
-      );
-      await buzzPage.confirmDeleteButton.click();
+      // 2. Wait toast after create
+      const toast = buzzPage.page.locator(".oxd-toast-content");
+      await expect(toast).toBeVisible({ timeout: 10000 });
 
-      await expect(buzzPage.page.locator(".oxd-toast-content"))
-        .toBeVisible({ timeout: 10000 })
-        .catch(() => {});
-      await buzzPage.page.waitForTimeout(1000);
-      await expect(
-        buzzPage.page.getByText(deleteTargetMessage).first(),
-      ).toBeHidden();
+      // 3. Ensure post appears
+      const postLocator = buzzPage.page.getByText(deleteTargetMessage);
+      await expect(postLocator).toBeVisible({ timeout: 10000 });
+
+      // 4. Delete post
+      await buzzPage.deletePost(true);
+
+      // 5. Wait toast after delete
+      await expect(toast).toBeVisible({ timeout: 10000 });
+
+      // 6. Verify post removed (BEST PRACTICE)
+      await expect(buzzPage.page.getByText(deleteTargetMessage)).toHaveCount(0);
     });
 
-    test("[TC-XXXX] Verify user can comment on a non-shared post and the comment is displayed successfully", async ({
+    test("[buzz-0444] Verify that the Share Video pop-up window is working correctly", async ({
       page,
-    }) => {});
+    }) => {
+      await buzzPage.openShareVideoModal(
+        "https://www.youtube.com/watch?v=04Kf_0kppPM",
+      );
+    });
   });
 });

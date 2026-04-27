@@ -20,6 +20,8 @@ export class BuzzPage extends BasePage {
   readonly fileInput: Locator;
   readonly modalShareButton: Locator;
   readonly modalCloseButton: Locator;
+  readonly titleShareVideoModal: Locator;
+  readonly activePostInModalHeader: Locator;
 
   // Share Video Modal
   readonly videoUrlInput: Locator;
@@ -46,6 +48,9 @@ export class BuzzPage extends BasePage {
 
   // Post Options
   readonly deletePostOption: Locator;
+  readonly titleAlert: Locator;
+  readonly noCancel: Locator;
+  readonly yesDelete: Locator;
   readonly editPostOption: Locator;
   readonly confirmDeleteButton: Locator;
   readonly editPostInput: Locator;
@@ -87,6 +92,10 @@ export class BuzzPage extends BasePage {
       name: "Share",
     });
     this.modalCloseButton = page.locator(".oxd-dialog-close-button");
+    this.titleShareVideoModal = page.locator('p:has-text("Share Video")');
+    this.activePostInModalHeader = page.getByPlaceholder(
+      "What's on your mind?",
+    );
 
     // Video Modal (shares the same dialog selector but different inputs)
     this.videoUrlInput = page.locator("textarea.oxd-buzz-post-input").nth(1); // Usually second textarea in dialog
@@ -140,6 +149,7 @@ export class BuzzPage extends BasePage {
     this.deletePostOption = page
       .locator("li")
       .filter({ hasText: /^Delete Post$/ });
+    this.titleAlert = page.getByText("Are you Sure?", { exact: true });
     this.editPostOption = page.locator("li").filter({ hasText: /^Edit Post$/ });
     this.confirmDeleteButton = page.getByRole("button", {
       name: "Yes, Delete",
@@ -148,6 +158,8 @@ export class BuzzPage extends BasePage {
     this.editPostSubmitButton = page
       .locator(".oxd-dialog-container button")
       .filter({ hasText: /Post|Save/i });
+    this.noCancel = page.getByRole("button", { name: "No, Cancel" });
+    this.yesDelete = page.getByRole("button", { name: "Yes, Delete" });
 
     // Post content
     this.firstPostText = page
@@ -163,8 +175,22 @@ export class BuzzPage extends BasePage {
   }
 
   async openSharePhotosModal() {
+    await this.highlight(this.sharePhotosButton, "Button share photo");
     await this.sharePhotosButton.click();
     await this.modalSharePhotos.waitFor({ state: "visible" });
+  }
+
+  async openShareVideoModal(url: string) {
+    await this.highlight(this.shareVideoButton, "Button share video");
+    await this.shareVideoButton.click();
+    await this.highlight(this.titleShareVideoModal, "Title modal share video");
+    await this.highlight(this.activePostInModalHeader, "What's on your mind?");
+    await this.highlight(this.videoUrlInput, "Video Url input");
+    await this.highlight(this.videoSaveButton, "Button save");
+    const text = "Auto ${Date.now()}";
+    await this.activePostInModalHeader.fill(text);
+    await this.videoUrlInput.fill(url);
+    await this.videoSaveButton.click();
   }
 
   async uploadPhoto(filePath: string) {
@@ -218,5 +244,37 @@ export class BuzzPage extends BasePage {
       "../../test-data/assets/lee-min-ho.jpg",
     );
     await this.fileInputPhoto.setInputFiles(filePath);
+  }
+
+  async deletePost(acceptDelete: boolean) {
+    const postLocator = this.firstPost.first();
+
+    await this.highlight(postLocator, "First post");
+
+    // lấy text trước khi thao tác
+    const firstPostText = (await postLocator.textContent())?.trim();
+
+    await this.firstPostMoreOptions.click();
+    await this.highlight(this.deletePostOption, "Button delete");
+    await this.deletePostOption.click();
+
+    await this.highlight(this.titleAlert, "Title alert 'Are you Sure?'");
+
+    if (acceptDelete) {
+      await this.yesDelete.click();
+
+      // nên wait toast xuất hiện trước khi verify
+      await this.toastMessage.waitFor({ state: "visible" });
+      await expect(this.toastMessage).toBeVisible();
+      await this.highlight(this.toastMessage, "Message delete success");
+
+      // verify post đã bị xóa
+      await expect(this.page.getByText(firstPostText!)).toHaveCount(0);
+    } else {
+      await this.noCancel.click();
+
+      // optional: verify post vẫn còn
+      await expect(postLocator).toBeVisible();
+    }
   }
 }
