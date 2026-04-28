@@ -251,7 +251,7 @@ export class BuzzPage extends BasePage {
 
     await this.highlight(postLocator, "First post");
 
-    // lấy text trước khi thao tác
+    // Get text before performing action
     const firstPostText = (await postLocator.textContent())?.trim();
 
     await this.firstPostMoreOptions.click();
@@ -263,17 +263,17 @@ export class BuzzPage extends BasePage {
     if (acceptDelete) {
       await this.yesDelete.click();
 
-      // nên wait toast xuất hiện trước khi verify
+      // Should wait for toast to appear before verifying
       await this.toastMessage.waitFor({ state: "visible" });
       await expect(this.toastMessage).toBeVisible();
       await this.highlight(this.toastMessage, "Message delete success");
 
-      // verify post đã bị xóa
+      // Verify post has been deleted
       await expect(this.page.getByText(firstPostText!)).toHaveCount(0);
     } else {
       await this.noCancel.click();
 
-      // optional: verify post vẫn còn
+      // Optional: verify post still exists
       await expect(postLocator).toBeVisible();
     }
   }

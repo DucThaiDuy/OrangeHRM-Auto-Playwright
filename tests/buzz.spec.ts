@@ -201,30 +201,30 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
     // test("[TC-XXXX] Verify user can like a comment successfully", async ({
     //   page,
     // }) => {
-    //   // 🔹 Nhấn nút mở comment theo đúng locator bạn cung cấp
+    //   // 🔹 Click the comment button using the provided locator
     //   const commentIcon = page.locator('div.orangehrm-buzz-post-actions').locator('button').nth(0);
     //   await commentIcon.scrollIntoViewIfNeeded();
     //   await highlight(page, commentIcon, "Comment Icon");
     //   await commentIcon.click();
 
-    //   // 🔹 Chờ một lúc để list comment hiển thị
+    //   // 🔹 Wait a moment for the comment list to display
     //   await page.waitForTimeout(3000);
 
-    //   // 🔹 Lấy comment đầu tiên (nth(1) vì nth(0) là ô nhập)
+    //   // 🔹 Get the first comment (nth(1) because nth(0) is the input field)
     //   const firstComment = page.locator('div.orangehrm-post-comment').locator('div').nth(1);
     //   await firstComment.scrollIntoViewIfNeeded();
 
-    //   // 🔹 Hover vào comment để làm hiện nút Like (do UI có thể ẩn nút này cho đến khi hover)
+    //   // 🔹 Hover over the comment to show the Like button (UI may hide it until hover)
     //   await firstComment.hover();
 
-    //   // 🔹 Tìm nút Like và click theo đúng locator bạn yêu cầu
+    //   // 🔹 Find the Like button and click it using the provided locator
     //   const likeBtn = firstComment.locator('p').filter({ hasText: 'Like' }).first();
     //   await expect(likeBtn).toBeVisible({ timeout: 10000 });
 
     //   await highlight(page, likeBtn, "Like Comment Button");
     //   await likeBtn.click({ force: true });
 
-    //   // 🔹 Verify nút Like đã được nhấn thành công (chờ API xử lý)
+    //   // 🔹 Verify the Like button was clicked successfully (wait for API to process)
     //   await page.waitForTimeout(2000);
     // });
 
@@ -253,14 +253,14 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
         el.scrollIntoView({ block: "center" });
       });
       await buzzPage.commentBtn.click();
-      // 🔥 chờ UI render comment
+      // 🔥 Wait for UI to render the comment
       await buzzPage.commentInfomation
         .first()
         .waitFor({
           state: "visible",
           timeout: 5000,
         })
-        .catch(() => {}); // tránh fail nếu chưa có comment
+        .catch(() => {}); // Prevent failure if there is no comment
 
       const countListComment = await buzzPage.commentInfomation.count();
 
