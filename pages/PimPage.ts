@@ -194,4 +194,16 @@ export class PimPage extends BasePage {
     await this.highlight(this.cancelBtn, "Cancel button");
     await this.highlight(this.saveBtn, "Save button");
   }
+
+  async resetButton() {
+    this.highlight(this.resetBtn, "reset button");
+    this.resetBtn.click();
+  }
+
+  async searchEmployeeName(employeeName: string) {
+    this.highlight(this.employeeNameInput, "Employee name input");
+    this.employeeNameInput.fill(employeeName);
+    this.highlight(this.searchBtn, "Button search");
+    this.searchBtn.click();
+  }
 }
