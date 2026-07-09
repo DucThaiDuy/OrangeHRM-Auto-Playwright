@@ -175,18 +175,12 @@ export class BuzzPage extends BasePage {
   }
 
   async openSharePhotosModal() {
-    await this.highlight(this.sharePhotosButton, "Button share photo");
     await this.sharePhotosButton.click();
     await this.modalSharePhotos.waitFor({ state: "visible" });
   }
 
   async openShareVideoModal(url: string) {
-    await this.highlight(this.shareVideoButton, "Button share video");
     await this.shareVideoButton.click();
-    await this.highlight(this.titleShareVideoModal, "Title modal share video");
-    await this.highlight(this.activePostInModalHeader, "What's on your mind?");
-    await this.highlight(this.videoUrlInput, "Video Url input");
-    await this.highlight(this.videoSaveButton, "Button save");
     const text = "Auto ${Date.now()}";
     await this.activePostInModalHeader.fill(text);
     await this.videoUrlInput.fill(url);
@@ -204,41 +198,30 @@ export class BuzzPage extends BasePage {
     }
     await this.modalShareButton.click();
     await this.modalSharePhotos.waitFor({ state: "hidden" });
-    await this.page.waitForTimeout(1000); // Allow feed to update
+    await this.page.waitForLoadState('domcontentloaded'); // Allow feed to update
   }
 
   async likeCommentOnPost() {
-    // await this.commentBtn.click();
-    await this.highlight(this.likeCommentBtn, "Like");
-    this.likeCommentBtn.click();
-    await this.highlight(this.heartCommentIcon, "heart Comment Icon");
+    await this.likeCommentBtn.click();
   }
 
   async addComment() {
     const text = `Auto comment ${Date.now()}`;
-    await this.highlight(this.commentInput, "Comment input");
     await this.commentInput.click();
     await this.commentInput.fill(text);
     await this.page.keyboard.press("Enter");
-    await this.highlight(this.toastMessage, "Message success");
   }
 
   async addPostArticle() {
     const text = `Auto comment ${Date.now()}`;
-    await this.highlight(this.postInput, "Input post");
     await this.postInput.click();
     await this.postInput.fill(text);
     await this.postButton.click();
     await expect(this.toastMessage).toBeVisible();
-    await this.highlight(this.toastMessage, "Message success");
   }
 
   async addSharePhoto() {
-    await this.highlight(this.sharePhotosButton, "Share photo button");
-    this.sharePhotosButton.click();
-    await this.highlight(this.titleSharePhotos, "Modal Share Photos");
-    await this.highlight(this.postInputSharePhoto, "post Input Share Photo");
-    await this.highlight(this.addPhoto, "Add photo");
+    await this.sharePhotosButton.click();
     const filePath = path.resolve(
       __dirname,
       "../../test-data/assets/lee-min-ho.jpg",
@@ -249,16 +232,11 @@ export class BuzzPage extends BasePage {
   async deletePost(acceptDelete: boolean) {
     const postLocator = this.firstPost.first();
 
-    await this.highlight(postLocator, "First post");
-
     // Get text before performing action
     const firstPostText = (await postLocator.textContent())?.trim();
 
     await this.firstPostMoreOptions.click();
-    await this.highlight(this.deletePostOption, "Button delete");
     await this.deletePostOption.click();
-
-    await this.highlight(this.titleAlert, "Title alert 'Are you Sure?'");
 
     if (acceptDelete) {
       await this.yesDelete.click();
@@ -266,7 +244,6 @@ export class BuzzPage extends BasePage {
       // Should wait for toast to appear before verifying
       await this.toastMessage.waitFor({ state: "visible" });
       await expect(this.toastMessage).toBeVisible();
-      await this.highlight(this.toastMessage, "Message delete success");
 
       // Verify post has been deleted
       await expect(this.page.getByText(firstPostText!)).toHaveCount(0);

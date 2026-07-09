@@ -18,11 +18,12 @@ export class ClaimPage extends BasePage {
     // Table Data
     readonly tableRows: Locator;
     readonly viewDetailsButton: Locator;
-    
+
     // Claim Details Page
     readonly detailsReferenceId: Locator;
     readonly detailsStatus: Locator;
     readonly backButton: Locator;
+
     // Assign Claim (Create Request)
     readonly assignEmployeeNameInput: Locator;
     readonly assignEventDropdown: Locator;
@@ -43,7 +44,7 @@ export class ClaimPage extends BasePage {
         this.eventNameDropdown = page.locator('div.oxd-input-group:has-text("Event Name") .oxd-select-wrapper');
         this.statusDropdown = page.locator('div.oxd-input-group:has-text("Status") .oxd-select-wrapper');
         this.includeDropdown = page.locator('div.oxd-input-group:has-text("Include") .oxd-select-wrapper');
-        
+
         // Buttons
         this.searchButton = page.getByRole('button', { name: 'Search' });
         this.resetButton = page.getByRole('button', { name: 'Reset' });
@@ -54,8 +55,9 @@ export class ClaimPage extends BasePage {
 
         // Claim Details Page
         this.detailsReferenceId = page.locator('div.oxd-grid-item:has-text("Reference Id") div:nth-child(2)');
-        this.detailsStatus = page.locator('.orangehrm-claim-status-name'); // Usually a chip or label
+        this.detailsStatus = page.locator('.orangehrm-claim-status-name');
         this.backButton = page.getByRole('button', { name: 'Back' });
+
         // Assign Claim Form fields
         this.assignEmployeeNameInput = page.locator('div.oxd-input-group:has-text("Employee Name") input');
         this.assignEventDropdown = page.locator('div.oxd-input-group:has-text("Event") .oxd-select-wrapper').first();
@@ -67,17 +69,20 @@ export class ClaimPage extends BasePage {
 
     async navigateToClaimModule() {
         await this.claimTab.click();
-        await this.page.waitForTimeout(1000); // Wait for page transitions
+        // Wait for the search panel to be ready instead of a fixed delay
+        await this.employeeNameSearchInput.waitFor({ state: 'visible' });
     }
 
     async navigateToAssignClaim() {
         await this.assignClaimButton.click();
-        await this.page.waitForTimeout(1000); // Wait for form to open
+        // Wait for the assign form to appear
+        await this.createButton.waitFor({ state: 'visible' });
     }
 
     async selectDropdownOption(dropdown: Locator, optionName: string) {
         await dropdown.click();
-        await this.page.waitForTimeout(500); // Wait for dropdown list to render
+        // Wait for options to render before clicking
+        await this.page.getByRole('option', { name: optionName }).waitFor({ state: 'visible' });
         await this.page.getByRole('option', { name: optionName }).click();
     }
 }

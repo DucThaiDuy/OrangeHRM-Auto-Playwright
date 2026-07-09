@@ -174,36 +174,15 @@ export class PimPage extends BasePage {
   }
 
   async addEmployeeAllInformation() {
-    await this.highlight(this.addBtn, "Add new employee button");
     await this.addBtn.click();
-    await this.highlight(this.titleAddEmployee, "Title form add new employee");
-    await this.highlight(this.firstNameInput, "Firts name");
-    await this.highlight(this.middleNameInput, "Middle name");
-    await this.highlight(this.lastNameInput, "Last name");
-    await this.highlight(this.employeeIdAddInput, "Employee ID form add");
-    await this.highlight(this.userNameInput, "user name");
-    await this.highlight(this.passwordInput, "password");
-    await this.highlight(this.confirmPasswordInput, "confirm password");
-    await this.highlight(
-      this.createLoginDetaiBtn,
-      "Button Create Login Detail",
-    );
-    await this.highlight(this.enabledRdo, "Enable radio button");
-    await this.highlight(this.disabledRdo, "Disabled radio button");
-    await this.highlight(this.avatar, "Avatar img");
-    await this.highlight(this.cancelBtn, "Cancel button");
-    await this.highlight(this.saveBtn, "Save button");
   }
 
   async resetButton() {
-    this.highlight(this.resetBtn, "reset button");
-    this.resetBtn.click();
+    await this.resetBtn.click();
   }
 
   async searchEmployeeName(employeeName: string) {
-    this.highlight(this.employeeNameInput, "Employee name input");
-    this.employeeNameInput.fill(employeeName);
-    this.highlight(this.searchBtn, "Button search");
-    this.searchBtn.click();
+    await this.employeeNameInput.fill(employeeName);
+    await this.searchBtn.click();
   }
 }

@@ -12,16 +12,20 @@ export class SystemUsersPage extends BasePage {
 
     // Actions
     readonly addButton: Locator;
-    
+
     // Table components
     readonly recordsFoundLabel: Locator;
     readonly tableRows: Locator;
     readonly firstRowEditIcon: Locator;
     readonly firstRowDeleteIcon: Locator;
+    readonly usernameCol: Locator;
+    readonly userRoleCol: Locator;
+    readonly employeeNameCol: Locator;
+    readonly statusCol: Locator;
 
     constructor(page: Page) {
         super(page);
-        
+
         // Search Panel
         this.usernameInput = page.locator('div.oxd-input-group:has-text("Username") input');
         this.userRoleDropdown = page.locator('div.oxd-input-group:has-text("User Role") .oxd-select-wrapper');
@@ -38,17 +42,23 @@ export class SystemUsersPage extends BasePage {
         this.tableRows = page.locator('.oxd-table-card');
         this.firstRowEditIcon = page.locator('.oxd-table-cell-actions .oxd-icon.bi-pencil-fill').first();
         this.firstRowDeleteIcon = page.locator('.oxd-table-cell-actions .oxd-icon.bi-trash').first();
+        this.usernameCol = page.locator('.oxd-table-header-cell').filter({ hasText: 'Username' });
+        this.userRoleCol = page.locator('.oxd-table-header-cell').filter({ hasText: 'User Role' });
+        this.employeeNameCol = page.locator('.oxd-table-header-cell').filter({ hasText: 'Employee Name' });
+        this.statusCol = page.locator('.oxd-table-header-cell').filter({ hasText: 'Status' });
     }
 
     async searchUser(username: string) {
         await this.usernameInput.fill(username);
         await this.searchButton.click();
-        await this.page.waitForTimeout(1000); // Allow table to refresh
+        // Wait for table to refresh by detecting loading indicator disappear or rows update
+        await this.page.waitForLoadState('domcontentloaded');
     }
 
     async resetSearch() {
         await this.resetButton.click();
-        await this.page.waitForTimeout(1000); // Allow table to clear
+        // Wait for input to be cleared instead of fixed delay
+        await this.usernameInput.waitFor({ state: 'visible' });
     }
 
     async getRecordsCountText() {

@@ -3,7 +3,6 @@ import { LoginPage } from "../pages/Auth/LoginPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import * as credentials from "../test-data/credentials.json";
 import { LOGIN_TEXTS, DASHBOARD_TEXTS } from "../constants/login-texts";
-import { highlight } from "../utils/highlight";
 
 test.describe("Login Functionality @auth", () => {
   let loginPage: LoginPage;
@@ -24,41 +23,31 @@ test.describe("Login Functionality @auth", () => {
   // ─── Grouped: All static UI elements on Login page (1 browser session) ───
   test("[TC-0002~0009] Verify Login page UI elements", async ({ page }) => {
     await test.step("[TC-0002] Username input is visible & enabled", async () => {
-      await highlight(page, loginPage.usernameInput, "Username Input");
       await expect(loginPage.usernameInput).toBeVisible();
       await expect(loginPage.usernameInput).toBeEnabled();
     });
 
     await test.step("[TC-0003] Password input is visible & masked", async () => {
-      await highlight(page, loginPage.passwordInput, "Password Input");
       await expect(loginPage.passwordInput).toBeVisible();
       await expect(loginPage.passwordInput).toHaveAttribute("type", "password");
     });
 
     await test.step("[TC-0004] Login button is visible & enabled", async () => {
-      await highlight(page, loginPage.loginButton, "Login Button");
       await expect(loginPage.loginButton).toBeVisible();
       await expect(loginPage.loginButton).toBeEnabled();
     });
 
     await test.step('[TC-0005] "Forgot your password?" link is displayed', async () => {
-      await highlight(page, loginPage.forgotPasswordLink, "Forgot Password Link");
       await expect(loginPage.forgotPasswordLink).toBeVisible();
     });
 
     await test.step("[TC-0006] Placeholder texts are correct", async () => {
-      await highlight(page, loginPage.usernameInput, "Username Placeholder");
       await expect(loginPage.usernameInput).toHaveAttribute("placeholder", LOGIN_TEXTS.usernameLabel);
-
-      await highlight(page, loginPage.passwordInput, "Password Placeholder");
       await expect(loginPage.passwordInput).toHaveAttribute("placeholder", LOGIN_TEXTS.passwordLabel);
     });
 
     await test.step("[TC-0009] Branding images are displayed correctly", async () => {
-      await highlight(page, loginPage.brandingLogo, "Branding Logo");
       await expect(loginPage.brandingLogo).toBeVisible();
-
-      await highlight(page, loginPage.sideImage, "Side Image");
       await expect(loginPage.sideImage).toBeVisible();
     });
   });
@@ -72,7 +61,6 @@ test.describe("Login Functionality @auth", () => {
       );
       await expect(page).toHaveURL(/dashboard/);
 
-      await highlight(page, dashboardPage.headerTitle, "Dashboard Header Title", "#00C853");
       const title = await dashboardPage.getHeaderTitle();
       expect(title).toContain(DASHBOARD_TEXTS.headerTitle);
     });
@@ -91,7 +79,6 @@ test.describe("Login Functionality @auth", () => {
       credentials.invalidUser.password
     );
     await loginPage.errorMessage.waitFor({ state: "visible" });
-    await highlight(page, loginPage.errorMessage, "Error Message", "#00C853");
     await expect(loginPage.errorMessage).toBeVisible();
 
     const errorText = await loginPage.getErrorMessage();
