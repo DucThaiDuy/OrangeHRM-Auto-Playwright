@@ -28,9 +28,9 @@ export class AddUserPage extends BasePage {
         await this.userRoleDropdown.click();
         await this.page.getByRole('option', { name: role }).click();
 
-        // Fill Employee Name and select from autocomplete
+        // Fill Employee Name and wait for autocomplete options to appear
         await this.employeeNameInput.fill(employeeName);
-        await this.page.waitForTimeout(2000); // Wait for hints
+        await this.page.getByRole('option').first().waitFor({ state: 'visible' });
         await this.page.getByRole('option').first().click();
 
         // Select Status
@@ -45,6 +45,7 @@ export class AddUserPage extends BasePage {
 
     async save() {
         await this.saveButton.click();
-        await this.page.waitForTimeout(1000); // Wait for submission toast or redirect
+        // Wait for navigation or toast instead of fixed delay
+        await this.page.waitForLoadState('domcontentloaded');
     }
 }

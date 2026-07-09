@@ -1,6 +1,5 @@
 import { Page, Locator } from '@playwright/test';
 import { Logger } from '../utils/logger/Logger';
-import { highlight as _highlight } from '../utils/highlight';
 
 export class BasePage {
     readonly page: Page;
@@ -40,14 +39,5 @@ export class BasePage {
         Logger.info(`Selecting dropdown option: ${optionName}`);
         await dropdown.click();
         await this.page.getByRole('option', { name: optionName }).click();
-    }
-
-    /**
-     * Highlight a locator element on screen before asserting it.
-     * Shows a colored border + label badge overlay.
-     * Usage: await this.highlight(locator, "Label");
-     */
-    async highlight(locator: Locator, label = '', color = '#FF4500', durationMs = 800) {
-        await _highlight(this.page, locator, label, color, durationMs);
     }
 }

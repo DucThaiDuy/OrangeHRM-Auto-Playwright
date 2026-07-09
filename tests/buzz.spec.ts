@@ -3,7 +3,6 @@ import { LoginPage } from "../pages/Auth/LoginPage";
 import { BuzzPage } from "../pages/Buzz/BuzzPage";
 import * as credentials from "../test-data/credentials.json";
 import * as path from "path";
-import { highlight } from "../utils/highlight";
 
 test.describe("Buzz Module - Share Photos Verification @buzz", () => {
   let loginPage: LoginPage;
@@ -35,68 +34,23 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       await test.step("[TC-0401/402] Buzz header and post input are visible", async () => {
         const buzzHeader = buzzPage.page.getByText("Buzz Newsfeed");
         await buzzHeader.waitFor({ state: "visible" });
-        await highlight(page, buzzHeader, "Buzz Newsfeed Header", "#00C853");
         await expect(buzzHeader).toBeVisible();
 
-        await highlight(page, buzzPage.postInput, "Post Input Field");
         await expect(buzzPage.postInput).toBeVisible();
       });
 
       await test.step("[TC-0403/404] Share Photos and Video buttons are visible", async () => {
-        await highlight(
-          page,
-          buzzPage.sharePhotosButton,
-          "Share Photos Button",
-          "#00C853",
-        );
         await expect(buzzPage.sharePhotosButton).toBeVisible();
-
-        await highlight(
-          page,
-          buzzPage.shareVideoButton,
-          "Share Video Button",
-          "#00C853",
-        );
         await expect(buzzPage.shareVideoButton).toBeVisible();
       });
 
       await test.step("[TC-0406-411] Share Photos Modal components are visible", async () => {
-        await highlight(
-          page,
-          buzzPage.sharePhotosButton,
-          "Share Photos Button",
-        );
         await buzzPage.openSharePhotosModal();
 
-        await highlight(
-          page,
-          buzzPage.modalSharePhotos,
-          "Share Photos Modal",
-          "#00C853",
-        );
         await expect(buzzPage.modalSharePhotos).toBeVisible();
-        await highlight(page, buzzPage.modalPostInput, "Modal Post Input");
         await expect(buzzPage.modalPostInput).toBeVisible();
-        await highlight(
-          page,
-          buzzPage.addPhotosArea,
-          "Add Photos Area",
-          "#00C853",
-        );
         await expect(buzzPage.addPhotosArea).toBeVisible();
-        await highlight(
-          page,
-          buzzPage.modalShareButton,
-          "Share Button (Disabled)",
-          "#00C853",
-        );
         await expect(buzzPage.modalShareButton).toBeDisabled();
-        await highlight(
-          page,
-          buzzPage.modalCloseButton,
-          "Close Button",
-          "#00C853",
-        );
         await expect(buzzPage.modalCloseButton).toBeVisible();
 
         // Close modal cleanly before test ends
@@ -115,32 +69,14 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
     }) => {
       await test.step("[TC-0418] Clicking Close icon closes the Share Photos modal", async () => {
         await buzzPage.openSharePhotosModal();
-        await highlight(
-          page,
-          buzzPage.modalCloseButton,
-          "Modal Close Button",
-          "#00C853",
-        );
         await buzzPage.modalCloseButton.click();
         await expect(buzzPage.modalSharePhotos).not.toBeVisible();
       });
 
       await test.step("[TC-0441] Switching between newsfeed tabs works correctly", async () => {
-        await highlight(
-          page,
-          buzzPage.likedPostsTab,
-          "Liked Posts Tab",
-          "#00C853",
-        );
         await buzzPage.likedPostsTab.click();
         await expect(buzzPage.likedPostsTab).toBeVisible();
 
-        await highlight(
-          page,
-          buzzPage.recentPostsTab,
-          "Recent Posts Tab",
-          "#00C853",
-        );
         await buzzPage.recentPostsTab.click();
       });
     });
@@ -150,83 +86,16 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       page,
     }) => {
       await test.step("[TC-0433] Liking a post works", async () => {
-        await highlight(page, buzzPage.firstPostLikeIcon, "Like Icon");
         await buzzPage.firstPostLikeIcon.click();
       });
 
       await test.step("[TC-0436] Commenting on a post works", async () => {
         const comment = `Great post! ${Date.now()}`;
-        await highlight(page, buzzPage.firstPostCommentIcon, "Comment Icon");
         await buzzPage.firstPostCommentIcon.click();
-        await highlight(page, buzzPage.commentInput, "Comment Input");
         await buzzPage.commentInput.fill(comment);
         await buzzPage.page.keyboard.press("Enter");
       });
     });
-
-    //[TC-XXXX] Verify user can like a comment successfully
-    // test("[TC-XXXX] Verify user can like a comment successfully", async ({
-    //   page,
-    // }) => {
-    //   await test.step("[TC-0433] Liking a post works", async () => {
-    //     await highlight(page, buzzPage.firstPostLikeIcon, "Like Icon");
-    //     await buzzPage.firstPostLikeIcon.click();
-    //   });
-
-    //   const comment = `Great post! ${Date.now()}`;
-    //   await highlight(page, buzzPage.firstPostCommentIcon, "Comment Icon");
-    //   await buzzPage.firstPostCommentIcon.click();
-    //   const commentCount = await buzzPage.commentInfomation.count();
-    //   const iconHeart = await buzzPage.heartCommentIcon.count();
-
-    //   if (commentCount === 0) {
-    //     await test.step("[TC-0436] Commenting on a post works", async () => {
-    //       const comment = `Great post! ${Date.now()}`;
-    //       await highlight(page, buzzPage.firstPostCommentIcon, "Comment Icon");
-    //       await buzzPage.firstPostCommentIcon.click();
-    //       await highlight(page, buzzPage.commentInput, "Comment Input");
-    //       await buzzPage.commentInput.fill(comment);
-    //       await buzzPage.page.keyboard.press("Enter");
-    //     });
-    //   } else {
-    //     if (iconHeart === 0) {
-    //       await highlight(page, buzzPage.likeCommentBtn, "Button like comment");
-    //       await buzzPage.likeCommentBtn.click();
-    //       await highlight(page, buzzPage.heartCommentIcon, "Heart Icon");
-    //     } else {
-    //       await highlight(page, buzzPage.heartCommentIcon, "Heart Icon");
-    //     }
-    //   }
-    // });
-    // test("[TC-XXXX] Verify user can like a comment successfully", async ({
-    //   page,
-    // }) => {
-    //   // 🔹 Click the comment button using the provided locator
-    //   const commentIcon = page.locator('div.orangehrm-buzz-post-actions').locator('button').nth(0);
-    //   await commentIcon.scrollIntoViewIfNeeded();
-    //   await highlight(page, commentIcon, "Comment Icon");
-    //   await commentIcon.click();
-
-    //   // 🔹 Wait a moment for the comment list to display
-    //   await page.waitForTimeout(3000);
-
-    //   // 🔹 Get the first comment (nth(1) because nth(0) is the input field)
-    //   const firstComment = page.locator('div.orangehrm-post-comment').locator('div').nth(1);
-    //   await firstComment.scrollIntoViewIfNeeded();
-
-    //   // 🔹 Hover over the comment to show the Like button (UI may hide it until hover)
-    //   await firstComment.hover();
-
-    //   // 🔹 Find the Like button and click it using the provided locator
-    //   const likeBtn = firstComment.locator('p').filter({ hasText: 'Like' }).first();
-    //   await expect(likeBtn).toBeVisible({ timeout: 10000 });
-
-    //   await highlight(page, likeBtn, "Like Comment Button");
-    //   await likeBtn.click({ force: true });
-
-    //   // 🔹 Verify the Like button was clicked successfully (wait for API to process)
-    //   await page.waitForTimeout(2000);
-    // });
 
     test("[TC-0429] Verify user can like a comment successfully", async ({
       page,
@@ -239,16 +108,9 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
         await buzzPage.addSharePhoto();
       }
 
-      await highlight(page, buzzPage.firstPost.first(), "first article");
       await buzzPage.firstPost.first().evaluate((el) => {
         el.scrollIntoView({ block: "center" });
       });
-      await highlight(
-        page,
-        buzzPage.likecommentShare,
-        "Like Comment Share Button",
-      );
-      await highlight(page, buzzPage.commentBtn, "Button comment");
       await buzzPage.likecommentShare.evaluate((el) => {
         el.scrollIntoView({ block: "center" });
       });
@@ -264,10 +126,7 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
 
       const countListComment = await buzzPage.commentInfomation.count();
 
-      // await highlight(page, buzzPage.commentInfomation, "Comment");
       if (countListComment > 0) {
-        await highlight(page, buzzPage.commentInfomation, "Comment");
-
         // click like button
         await buzzPage.likeCommentOnPost();
       } else {
@@ -284,18 +143,13 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       page,
     }) => {
       const message = `Testing text post ${Date.now()}`;
-      await highlight(page, buzzPage.postInput, "Post Input");
       await buzzPage.postInput.fill(message);
-      await highlight(page, buzzPage.postButton, "Post Button", "#00C853");
       await buzzPage.postButton.click();
 
       await expect(buzzPage.page.locator(".oxd-toast-content"))
         .toBeVisible({ timeout: 10000 })
         .catch(() => {});
-      await buzzPage.page.waitForTimeout(1000);
-
       const postedMessage = buzzPage.page.getByText(message).first();
-      await highlight(page, postedMessage, "Posted Message", "#00C853");
       await expect(postedMessage).toBeVisible();
     });
 
@@ -312,21 +166,13 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       );
 
       await buzzPage.openSharePhotosModal();
-      await highlight(page, buzzPage.modalPostInput, "Modal Post Input");
       await buzzPage.modalPostInput.fill(postMessage);
       await buzzPage.uploadPhoto(photoPath);
 
-      await highlight(
-        page,
-        buzzPage.modalShareButton,
-        "Share Button (Enabled)",
-        "#00C853",
-      );
       await expect(buzzPage.modalShareButton).toBeEnabled();
       await buzzPage.sharePost(postMessage);
 
       const postedText = buzzPage.page.getByText(postMessage).first();
-      await highlight(page, postedText, "Shared Photo Post", "#00C853");
       await expect(postedText).toBeVisible();
     });
 
@@ -335,42 +181,25 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       page,
     }) => {
       const initialMessage = `Post to edit ${Date.now()}`;
-      await highlight(page, buzzPage.postInput, "Post Input");
       await buzzPage.postInput.fill(initialMessage);
       await buzzPage.postButton.click();
       await expect(buzzPage.page.locator(".oxd-toast-content"))
         .toBeVisible({ timeout: 10000 })
         .catch(() => {});
-      await buzzPage.page.waitForTimeout(1000);
 
-      await highlight(
-        page,
-        buzzPage.firstPostMoreOptions,
-        "More Options (...)",
-        "#00C853",
-      );
+      await buzzPage.firstPostMoreOptions.waitFor({ state: 'visible' });
       await buzzPage.firstPostMoreOptions.click();
-      await highlight(page, buzzPage.editPostOption, "Edit Post Option");
       await buzzPage.editPostOption.click();
 
       const editedMessage = `${initialMessage} - EDITED`;
-      await highlight(page, buzzPage.editPostInput, "Edit Post Input");
       await buzzPage.editPostInput.fill(editedMessage);
-      await highlight(
-        page,
-        buzzPage.editPostSubmitButton,
-        "Submit Edit",
-        "#00C853",
-      );
       await buzzPage.editPostSubmitButton.click();
 
       await expect(buzzPage.page.locator(".oxd-toast-content"))
-        .toBeVisible({ timeout: 10000 })
+        .toBeVisible({ timeout: 5000 })
         .catch(() => {});
-      await buzzPage.page.waitForTimeout(1000);
 
       const editedText = buzzPage.page.getByText(editedMessage).first();
-      await highlight(page, editedText, "Edited Post Text", "#00C853");
       await expect(editedText).toBeVisible();
     });
 
@@ -381,7 +210,6 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       const deleteTargetMessage = `Post to delete ${Date.now()}`;
 
       // 1. Create post
-      await highlight(page, buzzPage.postInput, "Post Input");
       await buzzPage.postInput.fill(deleteTargetMessage);
       await buzzPage.postButton.click();
 
