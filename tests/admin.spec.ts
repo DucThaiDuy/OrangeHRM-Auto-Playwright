@@ -155,10 +155,12 @@ test.describe("Admin - User Management Verification @admin", () => {
       const randomUsername = `user_${Math.floor(Math.random() * 10000)}`;
       const password = "Password123!";
 
+      const employeeName = await systemUsersPage.getFirstRowEmployeeName();
+
       await systemUsersPage.addButton.click();
       await addUserPage.fillUserForm(
         "Admin",
-        "Alice Jensen",
+        employeeName,
         "Enabled",
         randomUsername,
         password,

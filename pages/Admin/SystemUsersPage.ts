@@ -72,4 +72,8 @@ export class SystemUsersPage extends BasePage {
     async selectStatus(status: string) {
         await this.selectDropdownOption(this.statusDropdown, status);
     }
+
+    async getFirstRowEmployeeName(): Promise<string> {
+        return await this.tableRows.first().locator('.oxd-table-cell').nth(3).innerText();
+    }
 }

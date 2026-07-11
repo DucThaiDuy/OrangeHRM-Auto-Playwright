@@ -47,7 +47,7 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       await test.step("[TC-0406-411] Share Photos Modal components are visible", async () => {
         await buzzPage.openSharePhotosModal();
 
-        await expect(buzzPage.modalSharePhotos).toBeVisible();
+        await expect(buzzPage.modal).toBeVisible();
         await expect(buzzPage.modalPostInput).toBeVisible();
         await expect(buzzPage.addPhotosArea).toBeVisible();
         await expect(buzzPage.modalShareButton).toBeDisabled();
@@ -70,7 +70,7 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       await test.step("[TC-0418] Clicking Close icon closes the Share Photos modal", async () => {
         await buzzPage.openSharePhotosModal();
         await buzzPage.modalCloseButton.click();
-        await expect(buzzPage.modalSharePhotos).not.toBeVisible();
+        await expect(buzzPage.modal).not.toBeVisible();
       });
 
       await test.step("[TC-0441] Switching between newsfeed tabs works correctly", async () => {
@@ -180,27 +180,17 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
     test("[TC-0439] Verify 'Edit Post' allows modified text to be saved", async ({
       page,
     }) => {
-      const initialMessage = `Post to edit ${Date.now()}`;
-      await buzzPage.postInput.fill(initialMessage);
-      await buzzPage.postButton.click();
-      await expect(buzzPage.page.locator(".oxd-toast-content"))
-        .toBeVisible({ timeout: 10000 })
-        .catch(() => {});
+      const initialMessage = `Post ${Date.now()}`;
+      await buzzPage.createPost(initialMessage);
+      await buzzPage.openEditPost(initialMessage);
+      console.log("Content initial message: " + initialMessage)
 
-      await buzzPage.firstPostMoreOptions.waitFor({ state: 'visible' });
-      await buzzPage.firstPostMoreOptions.click();
-      await buzzPage.editPostOption.click();
+      const initialMessageEdit =  `Edit post ${Date.now()}`;
+      await buzzPage.editPost(initialMessageEdit);
+      console.log("Content edit message: " + initialMessageEdit)
 
-      const editedMessage = `${initialMessage} - EDITED`;
-      await buzzPage.editPostInput.fill(editedMessage);
-      await buzzPage.editPostSubmitButton.click();
-
-      await expect(buzzPage.page.locator(".oxd-toast-content"))
-        .toBeVisible({ timeout: 5000 })
-        .catch(() => {});
-
-      const editedText = buzzPage.page.getByText(editedMessage).first();
-      await expect(editedText).toBeVisible();
+      const editPost = await buzzPage.searchPost(initialMessageEdit);
+      await expect(editPost).toBeVisible();
     });
 
     // ─── Standalone: Creates a post then DELETES it (state mutation chain) ─
@@ -209,34 +199,24 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
     }) => {
       const deleteTargetMessage = `Post to delete ${Date.now()}`;
 
-      // 1. Create post
-      await buzzPage.postInput.fill(deleteTargetMessage);
-      await buzzPage.postButton.click();
+      await buzzPage.createPost(deleteTargetMessage);
+      await buzzPage.deletePost(true, deleteTargetMessage);
 
-      // 2. Wait toast after create
-      const toast = buzzPage.page.locator(".oxd-toast-content");
-      await expect(toast).toBeVisible({ timeout: 10000 });
-
-      // 3. Ensure post appears
-      const postLocator = buzzPage.page.getByText(deleteTargetMessage);
-      await expect(postLocator).toBeVisible({ timeout: 10000 });
-
-      // 4. Delete post
-      await buzzPage.deletePost(true);
-
-      // 5. Wait toast after delete
-      await expect(toast).toBeVisible({ timeout: 10000 });
-
-      // 6. Verify post removed (BEST PRACTICE)
-      await expect(buzzPage.page.getByText(deleteTargetMessage)).toHaveCount(0);
+      const searchPost = await buzzPage.searchPost(deleteTargetMessage);
+      await expect(searchPost).toBeHidden();
     });
 
     test("[buzz-0444] Verify that the Share Video pop-up window is working correctly", async ({
       page,
     }) => {
-      await buzzPage.openShareVideoModal(
-        "https://www.youtube.com/watch?v=04Kf_0kppPM",
-      );
+      const message = `Auto ${Date.now()}`;
+      const videoUrl = "https://www.youtube.com/watch?v=04Kf_0kppPM";
+
+      await buzzPage.openShareVideoModal(message, videoUrl);
+
+      await buzzPage.deletePost(true, message);
+      await expect(await buzzPage.searchPost(message)).toBeHidden();
     });
+
   });
 });

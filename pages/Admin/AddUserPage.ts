@@ -10,6 +10,8 @@ export class AddUserPage extends BasePage {
     readonly confirmPasswordInput: Locator;
     readonly saveButton: Locator;
     readonly cancelButton: Locator;
+    readonly autocompleteOptions: Locator;
+    readonly searchingOption: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -21,6 +23,12 @@ export class AddUserPage extends BasePage {
         this.confirmPasswordInput = page.locator('div.oxd-input-group:has-text("Confirm Password") input[type="password"]');
         this.saveButton = page.getByRole('button', { name: 'Save' });
         this.cancelButton = page.getByRole('button', { name: 'Cancel' });
+        this.autocompleteOptions = page.locator('.oxd-autocomplete-option');
+        this.searchingOption = page.locator('.oxd-autocomplete-option', { hasText: 'Searching....' });
+    }
+
+    employeeOption(employeeName: string): Locator {
+        return this.page.getByRole('option', { name: employeeName }).first();
     }
 
     async fillUserForm(role: string, employeeName: string, status: string, username: string, password: string) {
@@ -29,9 +37,15 @@ export class AddUserPage extends BasePage {
         await this.page.getByRole('option', { name: role }).click();
 
         // Fill Employee Name and wait for autocomplete options to appear
-        await this.employeeNameInput.fill(employeeName);
-        await this.page.getByRole('option').first().waitFor({ state: 'visible' });
-        await this.page.getByRole('option').first().click();
+        await this.employeeNameInput.pressSequentially(employeeName);
+        
+        // Wait for "Searching...." to disappear
+        await this.searchingOption.waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+        
+        // Click the first matching autocomplete option
+        const firstOption = this.autocompleteOptions.first();
+        await firstOption.waitFor({ state: 'visible' });
+        await firstOption.click();
 
         // Select Status
         await this.statusDropdown.click();
@@ -45,7 +59,7 @@ export class AddUserPage extends BasePage {
 
     async save() {
         await this.saveButton.click();
-        // Wait for navigation or toast instead of fixed delay
-        await this.page.waitForLoadState('domcontentloaded');
+        // Wait for navigation back to System Users page
+        await this.page.waitForURL('**/viewSystemUsers');
     }
 }
