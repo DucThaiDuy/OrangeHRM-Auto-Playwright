@@ -194,7 +194,7 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
     });
 
     // ─── Standalone: Creates a post then DELETES it (state mutation chain) ─
-    test.only("[TC-0440] Verify 'Delete Post' removes it from the newsfeed", async ({
+    test("[TC-0440] Verify 'Delete Post' removes it from the newsfeed", async ({
       page,
     }) => {
       const deleteTargetMessage = `Post to delete ${Date.now()}`;
