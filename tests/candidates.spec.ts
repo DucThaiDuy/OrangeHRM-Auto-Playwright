@@ -63,7 +63,7 @@ test.describe("Recruitment - Candidates Verification @recruitment", () => {
             await candidatesPage.page.keyboard.press('Escape');
         });
 
-        test.only("[TC-0608] Verify Hiring Manager dropdown options", async ({ page }) => {
+        test("[TC-0608] Verify Hiring Manager dropdown options", async ({ page }) => {
             await candidatesPage.hiringManagerDropdown.click();
 
             await expect(candidatesPage.managerOption).toBeVisible();

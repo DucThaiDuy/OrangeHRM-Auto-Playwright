@@ -71,10 +71,12 @@ test.describe("Claim Module Verifications @claim", () => {
         });
 
         test("[TC-0508] Verify Reset button clears search input fields", async ({ page }) => {
-            await claimPage.referenceIdInput.fill("202307180000003");
+            await claimPage.employeeNameSearchInput.fill("manda user");
             await claimPage.resetButton.click();
-
-            await expect(claimPage.referenceIdInput).toHaveValue("");
+            await expect(await claimPage.invalidMessage).toBeVisible();
+            await claimPage.resetButton.click();
+            await expect(await claimPage.invalidMessage).toBeHidden();
+            await expect(claimPage.employeeNameSearchInput).toHaveValue("");
         });
     });
 
@@ -137,7 +139,7 @@ test.describe("Claim Module Verifications @claim", () => {
             await expect(claimPage.backButton).toBeVisible();
 
             await claimPage.backButton.click();
-            await expect(claimPage.employeeNameSearchInput).toBeVisible();
+            await expect(claimPage.myClaimTitle).toBeVisible();
         });
     });
 });

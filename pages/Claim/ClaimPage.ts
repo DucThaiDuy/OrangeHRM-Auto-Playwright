@@ -4,6 +4,7 @@ import { BasePage } from "../BasePage";
 export class ClaimPage extends BasePage {
     // Navigation
     readonly claimTab: Locator;
+    readonly myClaimTitle: Locator;
 
     // Search Panel (Employee Claims)
     readonly employeeNameSearchInput: Locator;
@@ -14,6 +15,9 @@ export class ClaimPage extends BasePage {
     readonly searchButton: Locator;
     readonly resetButton: Locator;
     readonly assignClaimButton: Locator;
+
+
+    readonly invalidMessage: Locator;
 
     // Table Data
     readonly tableRows: Locator;
@@ -37,6 +41,7 @@ export class ClaimPage extends BasePage {
 
         // General Navigation
         this.claimTab = page.locator('.oxd-main-menu-item:has-text("Claim")');
+        this.myClaimTitle = page.getByRole("heading", { name: "My Claims" });
 
         // Search Panel fields
         this.employeeNameSearchInput = page.locator('div.oxd-input-group:has-text("Employee Name") input');
@@ -45,6 +50,8 @@ export class ClaimPage extends BasePage {
         this.statusDropdown = page.locator('div.oxd-input-group:has-text("Status") .oxd-select-wrapper');
         this.includeDropdown = page.locator('div.oxd-input-group:has-text("Include") .oxd-select-wrapper');
 
+        this.invalidMessage = page.locator('.oxd-input-field-error-message');
+       
         // Buttons
         this.searchButton = page.getByRole('button', { name: 'Search' });
         this.resetButton = page.getByRole('button', { name: 'Reset' });
