@@ -66,6 +66,8 @@ export class BuzzPage extends BasePage {
 
   // message
   readonly toastMessage: Locator;
+  // readonly toastMassageUpdate: Locator;
+  // readonly toastMassageDelete: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -101,7 +103,7 @@ export class BuzzPage extends BasePage {
     this.modalCloseButton = page.locator(".oxd-dialog-close-button");
     this.titleShareVideoModal = page.locator('p:has-text("Share Video")');
     this.activePostInModalHeader = this.modal.getByPlaceholder("What's on your mind?");
-    this.sharePhotosModalTitle = page.getByText("Share Photos");
+    this.sharePhotosModalTitle = this.modal.getByText("Share Photos");
 
     // Video Modal (shares the same dialog selector but different inputs)
     this.videoUrlInput = this.modal.getByPlaceholder("Paste Video URL");
@@ -176,9 +178,13 @@ export class BuzzPage extends BasePage {
     this.postBodyText = page.locator(".orangehrm-buzz-post-body-text");
     this.postCard = page.locator(".oxd-sheet.orangehrm-buzz");
 
-    this.toastMessage = page
-      .locator(".oxd-toast-content-text")
-      .filter({ hasText: "Successfully Saved" });
+    this.toastMessage = page.locator(".oxd-toast--success");
+    // this.toastMassageUpdate = page
+    //   .locator(".oxd-toast-content-text")
+    //   .filter({ hasText: "Successfully Updated" });
+    // this.toastMassageDelete = page
+    //   .locator(".oxd-toast-content-text")
+    //   .filter({ hasText: "Successfully Deleted" });
   }
 
   async openSharePhotosModal() {
