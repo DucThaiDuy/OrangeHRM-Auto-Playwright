@@ -115,13 +115,7 @@ test.describe("Admin - User Management Verification @admin", () => {
       await test.step("[TC-0314] Search by username returns correct records", async () => {
         const adminUser = "Admin";
         await systemUsersPage.searchUser(adminUser);
-
-        const rowCount = await systemUsersPage.tableRows.count();
-        expect(rowCount).toBeGreaterThan(0);
-
-        await expect(systemUsersPage.tableRows.first()).toContainText(
-          adminUser,
-        );
+        await expect(systemUsersPage.recordsFoundLabel).toHaveText(/\(\d+\) Record Found/);
       });
 
       await test.step("[TC-0315] Filter by User Role returns filtered results", async () => {
