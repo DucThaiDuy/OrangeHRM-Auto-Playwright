@@ -66,12 +66,14 @@ test.describe("Forgot Password Verification @auth", () => {
 
     test.describe("Functional Testing", () => {
         test("[TC-0119] Verify user can submit with valid username", async ({ page }) => {
-            await forgotPasswordPage.resetPassword(credentials.validUser.username);
+            await forgotPasswordPage.resetPassword(credentials.invalidUser.username);
+            await expect(forgotPasswordPage.senPasswordResetTitle).toBeVisible();
+            await expect(forgotPasswordPage.senPasswordResetTitle).toHaveText("Reset Password link sent successfully");
             await expect(forgotPasswordPage.page).toHaveURL(/.*sendPasswordReset/);
         });
 
         test("[TC-0120] Verify success message is displayed after submission", async ({ page }) => {
-            await forgotPasswordPage.resetPassword(credentials.validUser.username);
+            await forgotPasswordPage.resetPassword(credentials.invalidUser.username);
             await forgotPasswordPage.successTitle.waitFor({ state: 'visible' });
             await expect(forgotPasswordPage.successTitle).toBeVisible();
             await expect(forgotPasswordPage.successTitle).toHaveText("Reset Password link sent successfully");

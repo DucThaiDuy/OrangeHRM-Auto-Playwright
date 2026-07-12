@@ -3,6 +3,7 @@ import { BasePage } from "../BasePage";
 
 export class ForgotPasswordPage extends BasePage {
   readonly titlePage: Locator;
+  readonly senPasswordResetTitle: Locator;
   readonly instructionTxt: Locator;
   readonly usernameLabel: Locator;
   readonly usernameInput: Locator;
@@ -11,9 +12,11 @@ export class ForgotPasswordPage extends BasePage {
   readonly errorMessage: Locator;
   readonly successTitle: Locator;
 
+
   constructor(page: Page) {
     super(page);
     this.titlePage = page.getByRole("heading", { name: "Reset Password" });
+    this.senPasswordResetTitle = page.getByRole('heading', { name: 'Reset Password link sent successfully' });
     this.instructionTxt = page.getByText(
       "Please enter your username to identify your account to reset your password",
       { exact: true }
