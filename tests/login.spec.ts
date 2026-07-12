@@ -21,7 +21,7 @@ test.describe("Login Functionality @auth", () => {
   });
 
   // ─── Grouped: All static UI elements on Login page (1 browser session) ───
-  test.only("[TC-0002~0009] Verify Login page UI elements", async ({ page }) => {
+  test("[TC-0002~0009] Verify Login page UI elements", async ({ page }) => {
     await test.step("[TC-0002] Username input is visible & enabled", async () => {
       await expect(loginPage.usernameInput).toBeVisible();
       await expect(loginPage.usernameInput).toBeEnabled();
