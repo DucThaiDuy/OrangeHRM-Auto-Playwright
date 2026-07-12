@@ -66,7 +66,13 @@ test.describe("Recruitment - Candidates Verification @recruitment", () => {
         test("[TC-0608] Verify Hiring Manager dropdown options", async ({ page }) => {
             await candidatesPage.hiringManagerDropdown.click();
 
+            // Wait for dropdown container to appear
             await expect(candidatesPage.managerOption).toBeVisible();
+
+            // Verify at least one option exists (not hardcoding a specific username)
+            const options = candidatesPage.page.getByRole('option');
+            await expect(options.first()).toBeVisible();
+
             await candidatesPage.page.keyboard.press('Escape');
         });
     });
