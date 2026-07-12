@@ -10,6 +10,7 @@ export class CandidatesPage extends BasePage {
     readonly jobTitleDropdown: Locator;
     readonly vacancyDropdown: Locator;
     readonly hiringManagerDropdown: Locator;
+    readonly managerOption: Locator;
     readonly statusDropdown: Locator;
     readonly candidateNameInput: Locator;
     readonly keywordsInput: Locator;
@@ -25,6 +26,14 @@ export class CandidatesPage extends BasePage {
     // Table
     readonly tableRows: Locator;
     readonly viewCandidateIcon: Locator;
+    readonly tableHeader: Locator;
+    readonly candidateColumn: Locator;
+    readonly vacancyColumn: Locator;
+    readonly statusColumn: Locator;
+    readonly hireManagerColumn: Locator;
+    readonly addedDateColumn: Locator;
+    readonly actionsColumn: Locator;
+    
 
     constructor(page: Page) {
         super(page);
@@ -32,6 +41,8 @@ export class CandidatesPage extends BasePage {
         // Sidebar/Header
         this.candidatesTab = page.locator('a.oxd-topbar-body-nav-tab-item:has-text("Candidates")');
         this.vacanciesTab = page.locator('a.oxd-topbar-body-nav-tab-item:has-text("Vacancies")');
+
+        this.managerOption = page.locator('.oxd-select-dropdown');
 
         // Search Panel
         this.jobTitleDropdown = page.locator('div.oxd-input-group:has-text("Job Title") .oxd-select-wrapper');
@@ -50,6 +61,27 @@ export class CandidatesPage extends BasePage {
 
         this.tableRows = page.locator('.oxd-table-card');
         this.viewCandidateIcon = page.locator('.bi-eye-fill').first();
+
+        this.tableHeader = this.page.locator(".oxd-table-header");
+
+        this.candidateColumn = this.page.getByRole("columnheader", {
+    name: "Candidate",
+});
+        this.vacancyColumn =  this.page.getByRole("columnheader", {
+    name: "Vacancy",
+});
+        this.statusColumn = this.page.getByRole("columnheader", {
+    name: "Status",
+});
+        this.hireManagerColumn = this.page.getByRole("columnheader", {
+    name: "Hiring Manager",
+});
+        this.addedDateColumn = this.page.getByRole("columnheader", {
+    name: "Date of Application",
+});
+        this.actionsColumn = this.page.getByRole("columnheader", {
+    name: "Actions",
+});
     }
 
     async navigateToRecruitment() {

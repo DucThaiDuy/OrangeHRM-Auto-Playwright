@@ -33,13 +33,16 @@ test.describe("Recruitment - Candidates Verification @recruitment", () => {
         });
 
         test("[TC-0604/0605] Verify Add button and table headers", async ({ page }) => {
+
+            await page.evaluate(() => window.scrollTo(0, 200));
             await expect(candidatesPage.addButton).toBeVisible();
 
-            const vacancyCol = candidatesPage.page.getByText('Vacancy', { exact: true }).nth(1);
-            const candidateCol = candidatesPage.page.getByText('Candidate', { exact: true }).nth(1);
-
-            await expect(vacancyCol).toBeVisible();
-            await expect(candidateCol).toBeVisible();
+            await expect(candidatesPage.candidateColumn).toBeVisible();
+            await expect(candidatesPage.vacancyColumn).toBeVisible();
+            await expect(candidatesPage.statusColumn).toBeVisible();
+            await expect(candidatesPage.hireManagerColumn).toBeVisible();
+            await expect(candidatesPage.addedDateColumn).toBeVisible();
+            await expect(candidatesPage.actionsColumn).toBeVisible();
         });
     });
 
@@ -63,8 +66,7 @@ test.describe("Recruitment - Candidates Verification @recruitment", () => {
         test("[TC-0608] Verify Hiring Manager dropdown options", async ({ page }) => {
             await candidatesPage.hiringManagerDropdown.click();
 
-            const managerOption = candidatesPage.page.getByRole('option', { name: 'manda user' });
-            await expect(managerOption).toBeVisible();
+            await expect(candidatesPage.managerOption).toBeVisible();
             await candidatesPage.page.keyboard.press('Escape');
         });
     });

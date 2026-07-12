@@ -38,7 +38,7 @@ export class SystemUsersPage extends BasePage {
         this.addButton = page.getByRole('button', { name: 'Add' });
 
         // Table
-        this.recordsFoundLabel = page.locator('span.oxd-text--span').filter({ hasText: 'Records Found' });
+        this.recordsFoundLabel = page.locator(".orangehrm-horizontal-padding span.oxd-text--span");
         this.tableRows = page.locator('.oxd-table-card');
         this.firstRowEditIcon = page.locator('.oxd-table-cell-actions .oxd-icon.bi-pencil-fill').first();
         this.firstRowDeleteIcon = page.locator('.oxd-table-cell-actions .oxd-icon.bi-trash').first();
@@ -71,5 +71,9 @@ export class SystemUsersPage extends BasePage {
 
     async selectStatus(status: string) {
         await this.selectDropdownOption(this.statusDropdown, status);
+    }
+
+    async getFirstRowEmployeeName(): Promise<string> {
+        return await this.tableRows.first().locator('.oxd-table-cell').nth(3).innerText();
     }
 }

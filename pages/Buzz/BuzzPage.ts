@@ -13,8 +13,9 @@ export class BuzzPage extends BasePage {
   readonly addPhoto: Locator;
   readonly fileInputPhoto: Locator;
 
+  readonly modal: Locator;
+
   // Share Photos Modal
-  readonly modalSharePhotos: Locator;
   readonly modalPostInput: Locator;
   readonly addPhotosArea: Locator;
   readonly fileInput: Locator;
@@ -22,10 +23,12 @@ export class BuzzPage extends BasePage {
   readonly modalCloseButton: Locator;
   readonly titleShareVideoModal: Locator;
   readonly activePostInModalHeader: Locator;
+  readonly sharePhotosModalTitle: Locator;
 
   // Share Video Modal
   readonly videoUrlInput: Locator;
   readonly videoSaveButton: Locator;
+  readonly videoPreview : Locator;
 
   // Tabs
   readonly recentPostsTab: Locator;
@@ -55,12 +58,16 @@ export class BuzzPage extends BasePage {
   readonly confirmDeleteButton: Locator;
   readonly editPostInput: Locator;
   readonly editPostSubmitButton: Locator;
+  readonly postBodyText: Locator;
+  readonly postCard: Locator;
 
   // Newsfeed
   readonly firstPostText: Locator;
 
   // message
   readonly toastMessage: Locator;
+  // readonly toastMassageUpdate: Locator;
+  // readonly toastMassageDelete: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -81,26 +88,28 @@ export class BuzzPage extends BasePage {
     this.addPhoto = page.getByText("Add Photos", { exact: true });
     this.fileInputPhoto = page.locator('input[type="file"]');
 
+    // dialog modal
+    this.modal = page.locator(".orangehrm-dialog-modal");
+    
     // Modal elements
-    this.modalSharePhotos = page.getByRole("dialog");
-    this.modalPostInput = this.modalSharePhotos.getByPlaceholder(
+    this.modalPostInput = this.modal.getByPlaceholder(
       "What's on your mind?",
     );
     this.addPhotosArea = page.locator(".oxd-file-div");
     this.fileInput = page.locator('input[type="file"]');
-    this.modalShareButton = this.modalSharePhotos.getByRole("button", {
+    this.modalShareButton = this.modal.getByRole("button", {
       name: "Share",
     });
     this.modalCloseButton = page.locator(".oxd-dialog-close-button");
     this.titleShareVideoModal = page.locator('p:has-text("Share Video")');
-    this.activePostInModalHeader = page.getByPlaceholder(
-      "What's on your mind?",
-    );
+    this.activePostInModalHeader = this.modal.getByPlaceholder("What's on your mind?");
+    this.sharePhotosModalTitle = this.modal.getByText("Share Photos");
 
     // Video Modal (shares the same dialog selector but different inputs)
-    this.videoUrlInput = page.locator("textarea.oxd-buzz-post-input").nth(1); // Usually second textarea in dialog
-    this.videoSaveButton = page.getByRole("button", { name: "Share" });
-
+    this.videoUrlInput = this.modal.getByPlaceholder("Paste Video URL");
+    this.videoPreview = this.modal.locator(".orangehrm-buzz-video-frame");
+    this.videoSaveButton = this.modal.getByRole("button", { name: "Share" });
+    
     // Tabs
     this.recentPostsTab = page.locator(
       'button.orangehrm-post-filters-button:has-text("Most Recent Posts")',
@@ -154,10 +163,8 @@ export class BuzzPage extends BasePage {
     this.confirmDeleteButton = page.getByRole("button", {
       name: "Yes, Delete",
     });
-    this.editPostInput = page.getByRole("dialog").getByRole("textbox");
-    this.editPostSubmitButton = page
-      .locator(".oxd-dialog-container button")
-      .filter({ hasText: /Post|Save/i });
+    this.editPostInput = this.modal.locator(".oxd-buzz-post-input");
+    this.editPostSubmitButton = this.modal.locator('button[type="submit"]');
     this.noCancel = page.getByRole("button", { name: "No, Cancel" });
     this.yesDelete = page.getByRole("button", { name: "Yes, Delete" });
 
@@ -168,23 +175,39 @@ export class BuzzPage extends BasePage {
       )
       .locator("p")
       .first();
+    this.postBodyText = page.locator(".orangehrm-buzz-post-body-text");
+    this.postCard = page.locator(".oxd-sheet.orangehrm-buzz");
 
-    this.toastMessage = page
-      .locator(".oxd-toast-content-text")
-      .filter({ hasText: "Successfully Saved" });
+    this.toastMessage = page.locator(".oxd-toast--success");
+    // this.toastMassageUpdate = page
+    //   .locator(".oxd-toast-content-text")
+    //   .filter({ hasText: "Successfully Updated" });
+    // this.toastMassageDelete = page
+    //   .locator(".oxd-toast-content-text")
+    //   .filter({ hasText: "Successfully Deleted" });
   }
 
   async openSharePhotosModal() {
     await this.sharePhotosButton.click();
-    await this.modalSharePhotos.waitFor({ state: "visible" });
+    await this.sharePhotosModalTitle.waitFor({ state: "visible" });
+    await this.modal.waitFor({ state: "visible" });
   }
 
-  async openShareVideoModal(url: string) {
+  async openShareVideoModal(content: string, url: string) {
     await this.shareVideoButton.click();
-    const text = "Auto ${Date.now()}";
-    await this.activePostInModalHeader.fill(text);
+    await this.modal.waitFor({ state: "visible" });
+
+    await this.activePostInModalHeader.fill(content);
+
+    // OrangeHRM auto-submits when it detects a valid video URL.
+    // The modal closes by itself — do NOT click Share or assert videoPreview.
+    // We fill URL then immediately wait for the modal to auto-close.
     await this.videoUrlInput.fill(url);
-    await this.videoSaveButton.click();
+
+    // Modal auto-closes after URL is processed (auto-submit behavior of OrangeHRM)
+    await this.modal.waitFor({ state: "hidden", timeout: 15000 });
+    await expect(this.toastMessage).toBeVisible();
+    await this.page.waitForLoadState("domcontentloaded");
   }
 
   async uploadPhoto(filePath: string) {
@@ -192,12 +215,20 @@ export class BuzzPage extends BasePage {
     await this.fileInput.setInputFiles(filePath);
   }
 
+  async createPost(message:string) {
+    await this.postInput.fill(message);
+    await this.postButton.click();
+    await this.toastMessage.waitFor({ state: "visible" });
+    await expect(this.toastMessage).toBeVisible();
+    await this.page.waitForLoadState('domcontentloaded'); // Allow feed to update
+  }
+
   async sharePost(text: string) {
     if (text) {
       await this.modalPostInput.fill(text);
     }
     await this.modalShareButton.click();
-    await this.modalSharePhotos.waitFor({ state: "hidden" });
+    await this.modal.waitFor({ state: "hidden" });
     await this.page.waitForLoadState('domcontentloaded'); // Allow feed to update
   }
 
@@ -220,6 +251,33 @@ export class BuzzPage extends BasePage {
     await expect(this.toastMessage).toBeVisible();
   }
 
+  async searchPost(message: string): Promise<Locator> {
+    return this.postCard.filter({
+      has: this.page.locator(".orangehrm-buzz-post-body-text", {
+        hasText: message,
+      }),
+    });
+  }
+
+  async openPostMenu(message: string) {
+    const post = await this.searchPost(message);
+    await this.firstPostMoreOptions.click();
+  }
+
+  async openEditPost(message: string) {
+    await this.openPostMenu(message);
+    await this.editPostOption.click();
+  }
+
+  async editPost(message: string) {
+    await this.editPostInput.clear();
+    await this.editPostInput.fill(message);
+    await this.editPostSubmitButton.click();
+    await this.toastMessage.waitFor({ state: "visible" });
+    await expect(this.toastMessage).toBeVisible();
+    await this.page.waitForLoadState('domcontentloaded'); // Allow feed to update
+  }
+
   async addSharePhoto() {
     await this.sharePhotosButton.click();
     const filePath = path.resolve(
@@ -229,29 +287,23 @@ export class BuzzPage extends BasePage {
     await this.fileInputPhoto.setInputFiles(filePath);
   }
 
-  async deletePost(acceptDelete: boolean) {
-    const postLocator = this.firstPost.first();
+  async deletePost(acceptDelete: boolean, message?: string) {
+  const post = message
+    ? await this.searchPost(message)
+    : this.firstPost.first();
 
-    // Get text before performing action
-    const firstPostText = (await postLocator.textContent())?.trim();
+  await this.firstPostMoreOptions.click();
+  await this.deletePostOption.click();
 
-    await this.firstPostMoreOptions.click();
-    await this.deletePostOption.click();
+  if (acceptDelete) {
+    await this.yesDelete.click();
 
-    if (acceptDelete) {
-      await this.yesDelete.click();
+    await expect(this.toastMessage).toBeVisible();
+    await expect(post).toHaveCount(0);
+  } else {
+    await this.noCancel.click();
 
-      // Should wait for toast to appear before verifying
-      await this.toastMessage.waitFor({ state: "visible" });
-      await expect(this.toastMessage).toBeVisible();
-
-      // Verify post has been deleted
-      await expect(this.page.getByText(firstPostText!)).toHaveCount(0);
-    } else {
-      await this.noCancel.click();
-
-      // Optional: verify post still exists
-      await expect(postLocator).toBeVisible();
-    }
+    await expect(post).toBeVisible();
   }
+}
 }

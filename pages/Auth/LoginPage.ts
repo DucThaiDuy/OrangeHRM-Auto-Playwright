@@ -17,7 +17,7 @@ export class LoginPage extends BasePage {
     this.loginButton = page.locator('button[type="submit"]');
     this.errorMessage = page.locator(".oxd-alert-content");
     this.forgotPasswordLink = page.locator(".orangehrm-login-forgot-header");
-    this.brandingLogo = page.locator('img[src*="ohrm_logo.png"]');
+    this.brandingLogo = page.locator('img[src*="ohrm_branding.png"]');
     this.sideImage = page.locator('img[src*="ohrm_branding.png"]');
   }
 
