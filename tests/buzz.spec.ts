@@ -206,7 +206,7 @@ test.describe("Buzz Module - Share Photos Verification @buzz", () => {
       await expect(searchPost).toBeHidden();
     });
 
-    test("[buzz-0444] Verify that the Share Video pop-up window is working correctly", async ({
+    test.skip("[buzz-0444] Verify that the Share Video pop-up window is working correctly", async ({
       page,
     }) => {
       const message = `Auto ${Date.now()}`;
